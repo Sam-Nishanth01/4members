@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Startup Acquisition Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background-color: #f7f7f7;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        form {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 400px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Startup Acquisition Prediction</h2>
+
+    <form id="predictForm">
+        <label for="funding_total_usd">Funding Total (USD):</label>
+        <input type="number" step="any" name="funding_total_usd" required>
+
+        <label for="company_age">Company Age (Years):</label>
+        <input type="number" step="any" name="company_age" required>
+
+        <label for="category_code">Category:</label>
+        <select name="category_code" required>
+            <option value="">-- Select Category --</option>
+            <option value="advertising">Advertising</option>
+            <option value="analytics">Analytics</option>
+            <option value="automotive">Automotive</option>
+            <option value="biotech">Biotech</option>
+            <option value="cleantech">Cleantech</option>
+            <option value="consulting">Consulting</option>
+            <option value="ecommerce">E-Commerce</option>
+            <option value="enterprise">Enterprise</option>
+            <option value="fashion">Fashion</option>
+            <option value="games_video">Games & Video</option>
+            <option value="hardware">Hardware</option>
+            <option value="health">Health</option>
+            <option value="hospitality">Hospitality</option>
+            <option value="manufacturing">Manufacturing</option>
+            <option value="medical">Medical</option>
+            <option value="messaging">Messaging</option>
+            <option value="mobile">Mobile</option>
+            <option value="music">Music</option>
+            <option value="network_hosting">Network Hosting</option>
+            <option value="news">News</option>
+            <option value="other">Other</option>
+            <option value="photo_video">Photo & Video</option>
+            <option value="public_relations">Public Relations</option>
+            <option value="real_estate">Real Estate</option>
+            <option value="search">Search</option>
+            <option value="security">Security</option>
+            <option value="semiconductor">Semiconductor</option>
+            <option value="social">Social</option>
+            <option value="software">Software</option>
+            <option value="transportation">Transportation</option>
+            <option value="travel">Travel</option>
+            <option value="web">Web</option>
+        </select>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    <div id="result" class="result" style="display: none;"></div>
+
+    <script>
+        document.getElementById('predictForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = {
+                funding_total_usd: formData.get('funding_total_usd'),
+                category_code: formData.get('category_code'),
+                company_age: formData.get('company_age')
+            };
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(res => {
+                const resultDiv = document.getElementById('result');
+                if (res.error) {
+                    resultDiv.innerHTML = `<strong>Error:</strong> ${res.error}`;
+                } else {
+                    resultDiv.innerHTML = `
+                        <strong>Prediction:</strong> ${res.prediction}<br>
+                        <strong>Probability of Acquisition:</strong> ${res.probability_of_acquisition}
+                    `;
+                }
+                resultDiv.style.display = 'block';
+            })
+            .catch(err => {
+                document.getElementById('result').innerHTML = `<strong>Error:</strong> ${err}`;
+                document.getElementById('result').style.display = 'block';
+            });
+        });
+    </script>
+</body>
+  </html>
+  
